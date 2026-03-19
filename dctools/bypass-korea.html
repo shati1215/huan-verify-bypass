@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Yusei+Magic&display=swap" rel="stylesheet">
+    <title>ƁΣLL フアン鯖自動認証ツール</title>
+    <style>
+        body { font-family: 'Yusei Magic', sans-serif; padding: 20px; }
+        textarea { width: 100%; height: 100px; font-family: 'Yusei Magic', sans-serif; }
+        button { margin-top: 10px; padding: 10px; background: #5865F2; color: white; border: none; border-radius: 5px; font-family: 'Yusei Magic', sans-serif; }
+        #log { margin-top: 20px; background: #eee; padding: 15px; white-space: pre-wrap; font-family: 'Yusei Magic', sans-serif; font-size:15px; }
+    </style>
+</head>
+<body>
+    <h3>ƁΣLL フアン鯖自動認証ツール</h3>
+    <h4>ソスコ公開してるのにグラバーとかいう情弱は使わないでください笑</h4>
+    <p>トークンを入力 (改行またはカンマ区切りで複数可):</p>
+    <textarea id="tokenInput" placeholder="トークン1&#10;トークン2"></textarea>
+    <button onclick="runTrigger()">実行する</button>
+    <div id="log">ログはここに表示されます！</div>
+
+    <script>
+        function generateSessionId() {
+    return Array.from({length: 32}, () => Math.floor(Math.random() * 16).toString(16)).join('');
+}
+
+        function getSuperProperties() {
+            const properties = {
+                "os": "Windows",
+                "browser": "Chrome",
+                "device": "",
+                "system_locale": "ja",
+                "browser_user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                "browser_version": "120.0.0.0",
+                "os_version": "10",
+                "referrer": "",
+                "referring_domain": "",
+                "referrer_current": "",
+                "referring_domain_current": "",
+                "release_channel": "stable",
+                "client_build_number": 251939,
+                "client_event_source": null
+            };
+            return btoa(JSON.stringify(properties));
+        }
+
+        async function runTrigger() {
+            const rawTokens = document.getElementById('tokenInput').value;
+            const logEl = document.getElementById('log');
+            // トークンを分割 (改行またはカンマ)
+            const tokens = rawTokens.split(/[\n,]+/).map(t => t.trim()).filter(t => t !== "");
+
+            if(tokens.length === 0) {
+                logEl.innerText = "トークンを入れてね！";
+                return;
+            }
+
+            const proxyUrl = "https://cors-proxy.shati.cc/?url=https://discord.com/api/v9/interactions";
+            const superProps = getSuperProperties();
+
+            for (const token of tokens) {
+                logEl.innerText += `\n実行中: ${token.substring(0, 10)}...`;
+                
+                try {
+                    const response = await fetch(proxyUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': token,
+                            'X-Super-Properties': superProps,
+                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+                        },
+                        body: JSON.stringify({
+                            "type": 3,
+                            "nonce": Date.now().toString(), 
+                            "guild_id": "1481415428097179680",
+                            "channel_id": "1481645317647503460",
+                            "message_flags": 0,
+                            "message_id": "1481649073688936469",
+                            "application_id": "1338490969754173531",
+                            "session_id": generateSessionId(),
+                            "data": {
+                                "component_type": 2,
+                                "custom_id": "🇦:1481417404725596342"
+                            }
+                        })
+                    });
+
+                    if (response.ok) {
+                        logEl.innerText += " -> 成功！";
+                    } else {
+                        const err = await response.json();
+                        logEl.innerText += ` -> 失敗: ${JSON.stringify(err)}`;
+                    }
+                } catch(e) {
+                    logEl.innerText += ` -> エラー: ${e.message}`;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
