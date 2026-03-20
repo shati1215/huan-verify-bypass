@@ -10,11 +10,65 @@
     <link href="https://fonts.googleapis.com/css2?family=Yusei+Magic&display=swap" rel="stylesheet">
     <title>ƁΣLL フアン鯖自動認証ツール</title>
     <style>
-        body { font-family: 'Yusei Magic', sans-serif; padding: 20px; }
-        textarea { width: 100%; height: 100px; font-family: 'Yusei Magic', sans-serif; }
-        button { margin-top: 10px; padding: 10px; background: #5865F2; color: white; border: none; border-radius: 5px; font-family: 'Yusei Magic', sans-serif; }
-        #log { margin-top: 20px; background: #eee; padding: 15px; white-space: pre-wrap; font-family: 'Yusei Magic', sans-serif; font-size:15px; }
-    </style>
+    /* ソスコ見るのえら :3 */
+    body { 
+        font-family: 'Yusei Magic', sans-serif; 
+        padding: 20px; 
+        background-color: #2c2f33;
+        color: #ffffff;
+    }
+
+    /* フォント同期 */
+    textarea, button { 
+        font: inherit; 
+    }
+
+    /* 入力欄 */
+    textarea { 
+        width: 100%; 
+        height: 150px; 
+        padding: 10px; 
+        background-color: #23272a; 
+        color: #ffffff; 
+        border: 2px solid #5865F2; 
+        border-radius: 8px; 
+        resize: vertical; /* サイズ変更を縦のみにする */
+    }
+
+    /* 入力欄のクリックした時のエフェクト */
+    textarea:focus { 
+        outline: none; 
+        border-color: #7289da; 
+        box-shadow: 0 0 5px #5865F2; 
+    }
+
+    /* ボタンのデザイン */
+    button { 
+        display: block;
+        margin-top: 10px; 
+        padding: 10px 20px; 
+        background: #5865F2; 
+        color: white; 
+        border: none; 
+        border-radius: 5px; 
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    button:hover { 
+        background: #4752c4; 
+    }
+
+    #log { 
+        margin-top: 20px; 
+        background: #23272a; 
+        padding: 15px; 
+        white-space: pre-wrap; 
+        font-size: 15px; 
+        border-radius: 8px;
+        color: #ddd;
+    }
+</style>
 </head>
 <body>
     <h3>ƁΣLL フアン鯖自動認証ツール</h3>
@@ -52,7 +106,7 @@
         async function runTrigger() {
             const rawTokens = document.getElementById('tokenInput').value;
             const logEl = document.getElementById('log');
-            // トークンを分割 (改行またはカンマ)
+            // トークンを分割するとこ (改行またはカンマ)
             const tokens = rawTokens.split(/[\n,]+/).map(t => t.trim()).filter(t => t !== "");
 
             if(tokens.length === 0) {
